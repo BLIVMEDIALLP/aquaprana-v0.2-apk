@@ -2,11 +2,13 @@
   "cli": { "version": ">= 7.0.0" },
   "build": {
     "preview": {
+      "node": "20.19.0",
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
+      "node": "20.19.0",
       "android": {
         "buildType": "app-bundle"
       }
