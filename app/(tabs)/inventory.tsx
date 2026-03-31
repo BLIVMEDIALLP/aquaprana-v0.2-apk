@@ -111,13 +111,16 @@ export default function InventoryScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
 
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Inventory</Text>
+        <View>
+          <Text style={styles.headerTitle}>Inventory</Text>
+          <Text style={styles.headerSub}>Feed, medicines &amp; supplies</Text>
+        </View>
         <TouchableOpacity style={styles.headerAddBtn} onPress={goAdd}>
-          <Ionicons name="add" size={24} color={COLORS.primary} />
+          <Ionicons name="add" size={22} color={COLORS.white} />
         </TouchableOpacity>
       </View>
 
@@ -160,21 +163,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.primary,
     paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.lg,
   },
   headerTitle: {
     fontSize: FONTS.sizes.xxl,
     fontWeight: FONTS.weights.bold,
-    color: COLORS.text,
+    color: COLORS.white,
+  },
+  headerSub: {
+    fontSize: FONTS.sizes.sm,
+    color: 'rgba(255,255,255,0.75)',
+    marginTop: 2,
   },
   headerAddBtn: {
-    padding: SPACING.xs,
-    minWidth: 44,
-    minHeight: 44,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
   },

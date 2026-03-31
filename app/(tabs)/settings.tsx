@@ -200,11 +200,12 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.grayBg} />
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
 
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Settings</Text>
+        <Text style={styles.headerSub}>Account &amp; preferences</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -320,16 +321,20 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.grayBg,
   },
   header: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.primary,
     paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.lg,
   },
   headerTitle: {
     fontSize: FONTS.sizes.xxl,
     fontWeight: FONTS.weights.bold,
-    color: COLORS.text,
+    color: COLORS.white,
+  },
+  headerSub: {
+    fontSize: FONTS.sizes.sm,
+    color: 'rgba(255,255,255,0.75)',
+    marginTop: 2,
   },
   scrollContent: {
     padding: SPACING.lg,

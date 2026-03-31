@@ -112,66 +112,90 @@ function PondCard({ pond, cycle, lastLog, onPress }: PondCardProps) {
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.75}>
-      {/* Row 1: name + species */}
-      <View style={styles.cardRow}>
-        <Text style={styles.cardName} numberOfLines={1}>
-          {pond.name}
-        </Text>
-        {cycle && (
-          <View style={styles.speciesBadge}>
-            <Text style={styles.speciesBadgeText}>{getSpeciesLabel(cycle.species)}</Text>
+      {/* Left accent stripe */}
+      <View style={[styles.cardAccent, { backgroundColor: wqColor }]} />
+
+      <View style={styles.cardContent}>
+        {/* Row 1: name + species + day badge */}
+        <View style={styles.cardRow}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.cardName} numberOfLines={1}>
+              {pond.name}
+            </Text>
+            <Text style={styles.cardArea}>
+              {pond.area_acres != null ? `${pond.area_acres} ac` : ''}
+              {pond.area_acres != null && pond.depth_ft != null ? '  ·  ' : ''}
+              {pond.depth_ft != null ? `${pond.depth_ft}ft` : ''}
+            </Text>
+          </View>
+          <View style={styles.badgeGroup}>
+            {cycle && (
+              <View style={styles.speciesBadge}>
+                <Text style={styles.speciesBadgeText}>{getSpeciesLabel(cycle.species)}</Text>
+              </View>
+            )}
+            {dayNum != null && (
+              <View style={styles.dayBadge}>
+                <Text style={styles.dayBadgeText}>Day {dayNum}</Text>
+              </View>
+            )}
+          </View>
+        </View>
+
+        {/* Row 2: Harvest countdown */}
+        {harvestCountdown != null && harvestCountdown > 0 && (
+          <View style={styles.harvestRow}>
+            <Ionicons name="calendar-outline" size={12} color={COLORS.amber} />
+            <Text style={styles.harvestText}>  Harvest in {harvestCountdown} days</Text>
           </View>
         )}
-      </View>
 
-      {/* Row 2: Day X + harvest + WQ dot */}
-      <View style={styles.cardRow}>
-        <Text style={styles.cardMeta}>
-          {dayNum != null ? `Day ${dayNum}` : 'No active cycle'}
-          {harvestCountdown != null && harvestCountdown > 0
-            ? `  ·  Harvest in ${harvestCountdown}d`
-            : ''}
-        </Text>
-        <View style={[styles.wqDot, { backgroundColor: wqColor }]} />
-      </View>
+        {/* Divider */}
+        <View style={styles.cardDivider} />
 
-      {/* Row 3: Biomass + Survival */}
-      {lastLog && (
-        <View style={styles.cardRow}>
-          <Text style={styles.cardStat}>
-            Biomass:{' '}
-            <Text style={styles.cardStatVal}>
-              {lastLog.biomass_kg != null ? `${lastLog.biomass_kg} kg` : '—'}
-            </Text>
-          </Text>
-          <Text style={styles.cardStat}>
-            Survival:{' '}
-            <Text style={styles.cardStatVal}>
-              {lastLog.biomass_kg != null && cycle
-                ? '—'
-                : '—'}
-            </Text>
+        {/* Row 3: WQ + Biomass stats */}
+        <View style={styles.statsRow}>
+          <View style={styles.statItem}>
+            <View style={[styles.wqDot, { backgroundColor: wqColor }]} />
+            <Text style={styles.statLabel}>Water Quality</Text>
+          </View>
+          {lastLog?.do_mgl != null && (
+            <View style={styles.statItem}>
+              <Text style={styles.statVal}>{lastLog.do_mgl}</Text>
+              <Text style={styles.statUnit}> mg/L DO</Text>
+            </View>
+          )}
+          {lastLog?.ph != null && (
+            <View style={styles.statItem}>
+              <Text style={styles.statVal}>pH {lastLog.ph}</Text>
+            </View>
+          )}
+          {lastLog?.biomass_kg != null && (
+            <View style={styles.statItem}>
+              <Text style={styles.statVal}>{lastLog.biomass_kg}</Text>
+              <Text style={styles.statUnit}> kg</Text>
+            </View>
+          )}
+        </View>
+
+        {/* Row 4: Last log */}
+        <View style={styles.timestampRow}>
+          <Ionicons
+            name={hasLogToday ? 'checkmark-circle' : 'time-outline'}
+            size={12}
+            color={hasLogToday ? COLORS.green : COLORS.amber}
+          />
+          <Text
+            style={[
+              styles.cardTimestamp,
+              { color: hasLogToday ? COLORS.green : COLORS.amber },
+            ]}
+          >
+            {lastLog
+              ? `  Last log: ${formatRelativeTime(lastLog.observed_at ?? lastLog.created_at)}`
+              : '  No logs yet — tap to log'}
           </Text>
         </View>
-      )}
-
-      {/* Row 4: Last log */}
-      <View style={styles.cardRow}>
-        <Ionicons
-          name="time-outline"
-          size={12}
-          color={hasLogToday ? COLORS.green : COLORS.amber}
-        />
-        <Text
-          style={[
-            styles.cardTimestamp,
-            { color: hasLogToday ? COLORS.muted : COLORS.amber },
-          ]}
-        >
-          {lastLog
-            ? `  Last log: ${formatRelativeTime(lastLog.observed_at ?? lastLog.created_at)}`
-            : '  No logs yet'}
-        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -262,18 +286,25 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
 
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>My Ponds</Text>
-        <View style={styles.headerRight}>
-          <View style={styles.syncDot} />
-          <Text style={styles.syncText}>
-            {lastSync.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        <View>
+          <Text style={styles.headerTitle}>My Ponds</Text>
+          <Text style={styles.headerSub}>
+            {items.length > 0
+              ? `${items.length} active pond${items.length !== 1 ? 's' : ''}`
+              : 'No ponds yet'}
           </Text>
+        </View>
+        <View style={styles.headerRight}>
+          <View style={styles.syncBadge}>
+            <View style={styles.syncDot} />
+            <Text style={styles.syncText}>Live</Text>
+          </View>
           <TouchableOpacity style={styles.addBtn} onPress={goToSetup}>
-            <Ionicons name="add" size={22} color={COLORS.primary} />
+            <Ionicons name="add" size={22} color={COLORS.white} />
           </TouchableOpacity>
         </View>
       </View>
@@ -319,34 +350,53 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.primary,
     paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.lg,
   },
   headerTitle: {
     fontSize: FONTS.sizes.xxl,
     fontWeight: FONTS.weights.bold,
-    color: COLORS.text,
+    color: COLORS.white,
+  },
+  headerSub: {
+    fontSize: FONTS.sizes.sm,
+    color: 'rgba(255,255,255,0.75)',
+    marginTop: 2,
   },
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.sm,
   },
+  syncBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderRadius: RADIUS.full,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 4,
+    gap: 4,
+  },
   syncDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLORS.green,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#4ade80',
   },
   syncText: {
     fontSize: FONTS.sizes.xs,
-    color: COLORS.muted,
+    color: COLORS.white,
+    fontWeight: FONTS.weights.medium,
   },
   addBtn: {
-    padding: SPACING.xs,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loadingContainer: {
     flex: 1,
@@ -361,56 +411,115 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.white,
     borderRadius: RADIUS.md,
-    padding: SPACING.lg,
     borderWidth: 1,
     borderColor: COLORS.border,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
+    flexDirection: 'row',
+    overflow: 'hidden',
+  },
+  cardAccent: {
+    width: 4,
+    borderRadius: 0,
+  },
+  cardContent: {
+    flex: 1,
+    padding: SPACING.lg,
     gap: SPACING.xs + 2,
   },
   cardRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
   },
   cardName: {
     fontSize: FONTS.sizes.lg,
     fontWeight: FONTS.weights.bold,
     color: COLORS.text,
-    flex: 1,
-    marginRight: SPACING.sm,
+  },
+  cardArea: {
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.muted,
+    marginTop: 2,
+  },
+  badgeGroup: {
+    flexDirection: 'row',
+    gap: SPACING.xs,
+    alignItems: 'center',
+    flexShrink: 0,
+    marginLeft: SPACING.sm,
   },
   speciesBadge: {
     backgroundColor: COLORS.primaryLight,
     borderRadius: RADIUS.full,
     paddingHorizontal: SPACING.sm,
-    paddingVertical: 2,
+    paddingVertical: 3,
   },
   speciesBadgeText: {
     fontSize: FONTS.sizes.xs,
     fontWeight: FONTS.weights.semibold,
     color: COLORS.primary,
   },
-  cardMeta: {
+  dayBadge: {
+    backgroundColor: '#f0fdf4',
+    borderRadius: RADIUS.full,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 3,
+  },
+  dayBadgeText: {
+    fontSize: FONTS.sizes.xs,
+    fontWeight: FONTS.weights.semibold,
+    color: COLORS.green,
+  },
+  harvestRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  harvestText: {
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.amber,
+    fontWeight: FONTS.weights.medium,
+  },
+  cardDivider: {
+    height: 1,
+    backgroundColor: COLORS.border,
+    marginVertical: 2,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
+    flexWrap: 'wrap',
+  },
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statVal: {
     fontSize: FONTS.sizes.sm,
+    fontWeight: FONTS.weights.bold,
+    color: COLORS.text,
+  },
+  statUnit: {
+    fontSize: FONTS.sizes.xs,
     color: COLORS.muted,
-    flex: 1,
+  },
+  statLabel: {
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.muted,
+    marginLeft: 4,
   },
   wqDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
-  cardStat: {
-    fontSize: FONTS.sizes.sm,
-    color: COLORS.muted,
-  },
-  cardStatVal: {
-    fontWeight: FONTS.weights.semibold,
-    color: COLORS.text,
+  timestampRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   cardTimestamp: {
     fontSize: FONTS.sizes.xs,

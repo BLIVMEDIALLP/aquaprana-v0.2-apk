@@ -76,7 +76,7 @@ export default function SplashScreen() {
           activeOpacity={0.85}
         >
           <Text style={styles.getStartedText}>Get Started</Text>
-          <Ionicons name="arrow-forward" size={20} color="#1E7AB8" />
+          <Ionicons name="arrow-forward" size={20} color="#ffffff" />
         </TouchableOpacity>
         <Text style={styles.versionText}>v0.2</Text>
       </SafeAreaView>
@@ -194,9 +194,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
-    borderWidth: 2,
-    borderColor: '#1E7AB8',
+    backgroundColor: '#1E7AB8',
     borderRadius: 14,
     paddingVertical: 16,
     paddingHorizontal: 32,
@@ -204,15 +202,15 @@ const styles = StyleSheet.create({
     minHeight: 56,
     gap: 8,
     shadowColor: '#1E7AB8',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 6,
   },
   getStartedText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#1E7AB8',
+    color: '#ffffff',
   },
   versionText: {
     marginTop: 14,

@@ -91,11 +91,12 @@ export default function LogTab() {
   // Multiple ponds — show picker
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
 
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Log Water Quality</Text>
+        <Text style={styles.headerSub}>Select a pond to log today's data</Text>
       </View>
 
       <View style={styles.pickerHint}>
@@ -134,16 +135,20 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.grayBg,
   },
   header: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.primary,
     paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.lg,
   },
   headerTitle: {
     fontSize: FONTS.sizes.xxl,
     fontWeight: FONTS.weights.bold,
-    color: COLORS.text,
+    color: COLORS.white,
+  },
+  headerSub: {
+    fontSize: FONTS.sizes.sm,
+    color: 'rgba(255,255,255,0.75)',
+    marginTop: 2,
   },
   loadingContainer: {
     flex: 1,

@@ -12,14 +12,14 @@ import type {
 
 /* ─── Storage Keys ─── */
 const KEYS = {
-  USER: '@aquaprana/user',
-  PONDS: '@aquaprana/ponds',
-  CYCLES: '@aquaprana/cycles',
-  LOGS: '@aquaprana/logs',
-  INVENTORY: '@aquaprana/inventory',
-  INVENTORY_ORDERS: '@aquaprana/inventory_orders',
-  FEEDING_SCHEDULES: '@aquaprana/feeding_schedules',
-  PRICE_CONFIGS: '@aquaprana/price_configs',
+  USER: 'aquaprana_user',
+  PONDS: 'aquaprana_ponds',
+  CYCLES: 'aquaprana_cycles',
+  LOGS: 'aquaprana_logs',
+  INVENTORY: 'aquaprana_inventory',
+  INVENTORY_ORDERS: 'aquaprana_inventory_orders',
+  FEEDING_SCHEDULES: 'aquaprana_feeding_schedules',
+  PRICE_CONFIGS: 'aquaprana_price_configs',
 } as const;
 
 /* ─── Generic helpers ─── */

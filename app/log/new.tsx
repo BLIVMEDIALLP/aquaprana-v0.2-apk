@@ -36,9 +36,9 @@ const C = {
 
 /* ─── Storage Keys ─── */
 const KEYS = {
-  PONDS: '@aquaprana/ponds',
-  CYCLES: '@aquaprana/cycles',
-  LOGS: '@aquaprana/logs',
+  PONDS: 'aquaprana_ponds',
+  CYCLES: 'aquaprana_cycles',
+  LOGS: 'aquaprana_logs',
 } as const;
 
 /* ─── Water quality field definitions ─── */
@@ -406,38 +406,46 @@ export default function NewLogScreen() {
 
         {/* ── Section: Water Quality ── */}
         <SectionHeader icon="water-outline" label="Water Quality" />
-        {WATER_QUALITY_FIELDS.map((field) => {
-          const key = field.key as string;
-          const warning = wqWarnings[key] ?? null;
-          return (
-            <View
-              key={key}
-              style={[s.card, warning ? s.cardWarn : null]}
-            >
-              <FieldLabel
-                label={field.unit ? `${field.label} (${field.unit})` : field.label}
-              />
-              <TextInput
-                style={s.input}
-                value={wqValues[key] ?? ''}
-                onChangeText={(t) =>
-                  setWqValues((prev) => ({ ...prev, [key]: t }))
-                }
-                onBlur={() => handleWqBlur(field)}
-                placeholder={`0–${field.max}`}
-                placeholderTextColor={C.muted}
-                keyboardType={field.keyboard}
-                returnKeyType="done"
-              />
-              {warning && (
-                <View style={s.warningRow}>
-                  <Ionicons name="warning" size={13} color={C.amber} />
-                  <Text style={s.warningText}>{warning}</Text>
-                </View>
-              )}
-            </View>
-          );
-        })}
+        <View style={s.wqGrid}>
+          {WATER_QUALITY_FIELDS.map((field) => {
+            const key = field.key as string;
+            const warning = wqWarnings[key] ?? null;
+            const val = wqValues[key] ?? '';
+            const numVal = parseFloat(val);
+            const status = val && !isNaN(numVal) ? field.flagCheck(numVal) : null;
+            const tileColor = status ? '#fffbeb' : val ? '#f0fdf4' : C.white;
+            const borderColor = status ? C.amber : val ? C.green : C.border;
+            return (
+              <View
+                key={key}
+                style={[s.wqTile, { backgroundColor: tileColor, borderColor }]}
+              >
+                <Text style={s.wqTileLabel}>
+                  {field.label}
+                  {field.unit ? ` (${field.unit})` : ''}
+                </Text>
+                <TextInput
+                  style={s.wqTileInput}
+                  value={val}
+                  onChangeText={(t) =>
+                    setWqValues((prev) => ({ ...prev, [key]: t }))
+                  }
+                  onBlur={() => handleWqBlur(field)}
+                  placeholder="—"
+                  placeholderTextColor={C.muted}
+                  keyboardType={field.keyboard}
+                  returnKeyType="next"
+                />
+                {warning && (
+                  <View style={s.wqTileWarn}>
+                    <Ionicons name="warning" size={10} color={C.amber} />
+                    <Text style={s.wqTileWarnText} numberOfLines={2}>{warning.replace('Warning: ', '')}</Text>
+                  </View>
+                )}
+              </View>
+            );
+          })}
+        </View>
 
         {/* ── Section: Farm Management ── */}
         <SectionHeader icon="leaf-outline" label="Farm Management" />
@@ -682,6 +690,49 @@ const s = StyleSheet.create({
   /* Warning */
   warningRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 5, marginTop: 8 },
   warningText: { flex: 1, fontSize: 12, color: C.amber, fontWeight: '500' },
+
+  /* WQ 2-col grid */
+  wqGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 10,
+  },
+  wqTile: {
+    width: '47%',
+    flexGrow: 1,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    padding: 10,
+    minHeight: 80,
+    justifyContent: 'space-between',
+  },
+  wqTileLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: C.muted,
+    marginBottom: 4,
+  },
+  wqTileInput: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: C.text,
+    paddingVertical: 2,
+    minHeight: 32,
+  },
+  wqTileWarn: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 3,
+    marginTop: 4,
+  },
+  wqTileWarnText: {
+    flex: 1,
+    fontSize: 9,
+    color: C.amber,
+    fontWeight: '500',
+    lineHeight: 12,
+  },
 
   /* Time picker button */
   timePickerBtn: {
